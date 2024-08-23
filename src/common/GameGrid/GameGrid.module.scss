@@ -1,0 +1,26 @@
+/* Styles for the grid and its cells */
+.grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(2rem, 1fr));
+	gap: 0.25rem;
+	margin: 20px auto;
+}
+
+.gridRow {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(2rem, 1fr));
+	gap: 0.25rem;
+}
+
+.gridCell {
+	width: 2rem;
+	height: 2rem;
+	border: 1px solid #ccc;
+	background-color: transparent;
+	cursor: pointer;
+	transition: background-color 0.2s ease;
+
+	&:hover {
+		background-color: #f0f0f0;
+	}
+}
