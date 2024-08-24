@@ -7,19 +7,26 @@ const GameGrid = () => {
     const [grid, setGrid] = useState<Grid>({});
     const [gridSize, setGridSize] = useState(10);
 
-    useEffect(() => {
-        const fetchGameState = async () => {
-            try {
-                const response = await axios.get('/api/game-state');
-                console.log(response.data);
-                setGridSize(response.data.gridSize);
-                setGrid(response.data.gridState);
-            } catch (error) {
-                console.error('Error fetching game state:', error);
-            }
-        };
+    // Function to fetch game state from the server
+    const fetchGameState = async () => {
+        try {
+            const response = await axios.get('/api/game-state');
+            console.log(response.data);
+            setGridSize(response.data.gridSize);
+            setGrid(response.data.gridState);
+        } catch (error) {
+            console.error('Error fetching game state:', error);
+        }
+    };
 
+    useEffect(() => {
         fetchGameState();
+
+        const intervalId = setInterval(() => {
+            fetchGameState();
+        }, 2500);
+
+        return () => clearInterval(intervalId);
     }, []);
 
     const handleCellClick = (x: number, y: number) => {
@@ -70,3 +77,4 @@ const GameGrid = () => {
 };
 
 export default GameGrid;
+
