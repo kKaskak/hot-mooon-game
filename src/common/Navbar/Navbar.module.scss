@@ -1,0 +1,112 @@
+@import '@/sizes.scss';
+
+.navbarContainer {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    max-width: 420px;
+    height: var(--navbar-height);
+    background: var(--item-color);
+    box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 9;
+
+    .tabWrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-direction: column;
+        gap: 0.5rem 0;
+        margin: 0.5rem;
+        cursor: pointer;
+
+        .tabButton {
+            width: 3.5rem;
+            height: 2.5rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            outline: none;
+            border: none;
+            border-radius: 24px;
+            background-color: transparent;
+            position: relative;
+
+            .icon {
+                width: 2rem;
+                height: 2rem;
+                transition: transform 0.3s;
+                stroke: #1C55DC;
+        
+                &:hover {
+                    transform: scale(1.1);
+                }
+            }
+
+            .animatedSpan {
+                position: absolute;
+                top: 0;
+                right: 0;
+                left: 0;
+                bottom: 0;
+                z-index: -1;
+                background-color: #fff;
+                border-radius: 2rem;
+    
+                @media (prefers-color-scheme: dark) {
+                    filter: invert(0.94);
+                }
+            }    
+        
+            &[disabled] {
+                pointer-events: none;
+                opacity: 0.3;
+            }
+        
+            &.active {
+                .icon {
+                    path {
+                        fill: var(--secondary-accent-color);
+                        stroke: none;
+                    }
+
+                    rect {
+                        fill: var(--secondary-accent-color);
+                    }
+                }
+            }
+        }
+
+        .tabName {
+            display: block;
+            font-size: var(--font-size-small);
+            font-weight: var(--font-weight-semi-mid);
+            color: #5C86E4;
+            opacity: 0.6;
+
+            &.active {
+                opacity: 1;
+            }
+        }
+
+        &.hideOnMobile {
+            display: none;
+        }
+    }
+}
+
+@include lg {
+    .NavbarContainer {
+        .tabWrapper {
+            &.hideOnMobile {
+                display: flex;
+            }
+        }
+    }
+}
+

@@ -27,7 +27,7 @@ db.serialize(() => {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE,
             color TEXT,
-            points INTEGER DEFAULT 0
+            score INTEGER DEFAULT 0
         )
     `);
 
@@ -45,7 +45,7 @@ db.serialize(() => {
         CREATE TABLE IF NOT EXISTS Leaderboard (
             id INTEGER PRIMARY KEY,
             username TEXT,
-            points INTEGER
+            score INTEGER
         )
     `);
 });
@@ -71,7 +71,7 @@ app.post('/join', (req, res) => {
 
 // Route to get the current game state
 app.get('/game-state', (req, res) => {
-	const roundId = 1; // For simplicity, we'll use a single round (expand as needed)
+	const roundId = 1;
 
 	const query = `SELECT * FROM Rounds WHERE id = ?`;
 	db.get(query, [roundId], (err, round) => {
@@ -89,7 +89,7 @@ app.get('/game-state', (req, res) => {
 // Route to handle player moves
 app.post('/move', (req, res) => {
     const { username, x, y } = req.body;
-    const roundId = 1; // For simplicity, we'll use a single round (expand as needed)
+    const roundId = 1; // For now, we only have one round
     const gridPosition = `${x},${y}`;
 
     // Check if the round exists
@@ -108,18 +108,18 @@ app.post('/move', (req, res) => {
                 } else {
                     // If another player occupies this cell, return the move to the original player
                     db.run(
-                        `UPDATE Players SET points = points - 1 WHERE username = ?`,
+                        `UPDATE Players SET score = score - 1 WHERE username = ?`,
                         [existingPlayer.username],
                     );
                     db.run(
-                        `UPDATE Players SET points = points + 1 WHERE username = ?`,
+                        `UPDATE Players SET score = score + 1 WHERE username = ?`,
                         [username],
                     );
                 }
             }
 
             // Fetch the player from the database
-            db.get(`SELECT id, username, color, points FROM Players WHERE username = ?`, [username], (err, player) => {
+            db.get(`SELECT id, username, color, score FROM Players WHERE username = ?`, [username], (err, player) => {
                 if (err || !player) {
                     return res.status(500).json({ error: 'Player not found' });
                 }
@@ -129,7 +129,7 @@ app.post('/move', (req, res) => {
                     id: player.id,
                     username: player.username,
                     color: player.color,
-                    points: player.points
+                    score: player.score
                 };
 
                 // Update the round in the database
@@ -150,7 +150,7 @@ app.post('/move', (req, res) => {
 
 // Route to get the leaderboard
 app.get('/leaderboard', (req, res) => {
-	const query = `SELECT username, points FROM Players ORDER BY points DESC LIMIT 300`;
+	const query = `SELECT username, score FROM Players ORDER BY score DESC LIMIT 300`;
 
 	db.all(query, [], (err, rows) => {
 		if (err) {
