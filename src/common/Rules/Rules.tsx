@@ -1,7 +1,6 @@
 const Rules = () => {
 	return (
 		<div>
-			<h2>Game Rules</h2>
 			<ul>
 				<li>
 					The game takes place on a grid of various sizes (10x10,
