@@ -1,5 +1,3 @@
 import UsernameInput from './UsernameInput';
 
-export {
-    UsernameInput
-}
+export { UsernameInput };

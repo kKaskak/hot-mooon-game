@@ -14,15 +14,15 @@ const UsernameInput = () => {
 
 	return (
 		<form onSubmit={handleSubmit}>
-			<label htmlFor='username'>Enter your username:</label>
+			<label htmlFor="username">Enter your username:</label>
 			<input
-				id='username'
-				type='text'
+				id="username"
+				type="text"
 				value={inputValue}
 				onChange={(e) => setInputValue(e.target.value)}
 				required
 			/>
-			<button type='submit'>Join Game</button>
+			<button type="submit">Join Game</button>
 		</form>
 	);
 };

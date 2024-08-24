@@ -88,49 +88,64 @@ app.get('/game-state', (req, res) => {
 
 // Route to handle player moves
 app.post('/move', (req, res) => {
-	const { username, x, y } = req.body;
+    const { username, x, y } = req.body;
+    const roundId = 1; // For simplicity, we'll use a single round (expand as needed)
+    const gridPosition = `${x},${y}`;
 
-	const roundId = 1; // For simplicity, we'll use a single round (expand as needed)
-	const gridPosition = `${x},${y}`;
+    // Check if the round exists
+    const query = `SELECT * FROM Rounds WHERE id = ?`;
+    db.get(query, [roundId], (err, round) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        } else if (round) {
+            let gridState = JSON.parse(round.gridState);
 
-	// Check if the round exists
-	const query = `SELECT * FROM Rounds WHERE id = ?`;
-	db.get(query, [roundId], (err, round) => {
-		if (err) {
-			return res.status(500).json({ error: err.message });
-		} else if (round) {
-			let gridState = JSON.parse(round.gridState);
+            // Check if the cell is already occupied
+            const existingPlayer = gridState[gridPosition];
+            if (existingPlayer) {
+                if (existingPlayer.username === username) {
+                    return res.status(400).json({ message: "You can't occupy your own cell again!" });
+                } else {
+                    // If another player occupies this cell, return the move to the original player
+                    db.run(
+                        `UPDATE Players SET points = points - 1 WHERE username = ?`,
+                        [existingPlayer.username],
+                    );
+                    db.run(
+                        `UPDATE Players SET points = points + 1 WHERE username = ?`,
+                        [username],
+                    );
+                }
+            }
 
-			// Check if the cell is already occupied
-			const existingPlayer = gridState[gridPosition];
-			if (existingPlayer && existingPlayer !== username) {
-				// If another player occupies this cell, return the move to the original player
-				db.run(
-					`UPDATE Players SET points = points + 1 WHERE username = ?`,
-					[existingPlayer],
-				);
-				db.run(
-					`UPDATE Players SET points = points - 1 WHERE username = ?`,
-					[username],
-				);
-			}
+            // Fetch the player from the database
+            db.get(`SELECT id, username, color, points FROM Players WHERE username = ?`, [username], (err, player) => {
+                if (err || !player) {
+                    return res.status(500).json({ error: 'Player not found' });
+                }
 
-			// Update the grid state with the new player's move
-			gridState[gridPosition] = username;
+                // Update the grid state with the new player's move
+                gridState[gridPosition] = {
+                    id: player.id,
+                    username: player.username,
+                    color: player.color,
+                    points: player.points
+                };
 
-			// Update the round in the database
-			const updateQuery = `UPDATE Rounds SET gridState = ? WHERE id = ?`;
-			db.run(updateQuery, [JSON.stringify(gridState), roundId], (err) => {
-				if (err) {
-					res.status(500).json({ error: err.message });
-				} else {
-					res.json({ success: true, gridState });
-				}
-			});
-		} else {
-			res.status(404).json({ error: 'No active round found' });
-		}
-	});
+                // Update the round in the database
+                const updateQuery = `UPDATE Rounds SET gridState = ? WHERE id = ?`;
+                db.run(updateQuery, [JSON.stringify(gridState), roundId], (err) => {
+                    if (err) {
+                        res.status(500).json({ error: err.message });
+                    } else {
+                        res.json({ success: true, gridState, message: 'Cell occupied!', player: gridState[gridPosition] });
+                    }
+                });
+            });
+        } else {
+            res.status(404).json({ error: 'No active round found' });
+        }
+    });
 });
 
 // Route to get the leaderboard

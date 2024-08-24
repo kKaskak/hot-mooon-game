@@ -2,13 +2,11 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const Leaderboard = () => {
-	const [leaderboard, setLeaderboard] = useState<
-		{ username: string; points: number }[]
-	>([]);
+	const [leaderboard, setLeaderboard] = useState<Leaderboard>([]);
 
 	useEffect(() => {
 		const fetchLeaderboard = async () => {
-			const response = await axios.get('/leaderboard');
+			const response = await axios.get('/api/leaderboard');
 			setLeaderboard(response.data.leaderboard);
 		};
 
@@ -19,9 +17,9 @@ const Leaderboard = () => {
 		<div>
 			<h2>Top Players</h2>
 			<ol>
-				{leaderboard.map((player, index) => (
+				{leaderboard.map((user, index) => (
 					<li key={index}>
-						{index + 1}. {player.username} - {player.points} points
+						{user.username} - {user.score} points
 					</li>
 				))}
 			</ol>

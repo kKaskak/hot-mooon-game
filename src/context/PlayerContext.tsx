@@ -37,7 +37,7 @@ export const PlayerProvider = ({ children }: Props) => {
 
 	const joinGame = async (username: string) => {
 		try {
-			const response = await axios.post('/join', { username });
+			const response = await axios.post('/api/join', { username });
 			setColor(response.data.color);
 			localStorage.setItem('color', response.data.color);
 		} catch (error) {

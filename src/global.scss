@@ -1,0 +1,267 @@
+@import './sizes.scss';
+
+$border-radius: 0.5rem;
+$font-weight-bold: 700;
+$font-weight-mid: 600;
+$font-weight-semi-mid: 500;
+$font-weight-normal: 400;
+$font-size-title: 2rem;
+$font-size-subtitle: 1.25rem;
+$font-size-small-subtitle: 0.775rem;
+$font-size-normal: 1rem;
+$font-size-small: 0.625rem;
+
+:root {
+	--border-radius: #{$border-radius};
+	--font-weight-bold: #{$font-weight-bold};
+	--font-weight-mid: #{$font-weight-mid};
+	--font-weight-semi-mid: #{$font-weight-semi-mid};
+	--font-weight-normal: #{$font-weight-normal};
+	--font-size-title: #{$font-size-title};
+	--font-size-subtitle: #{$font-size-subtitle};
+	--font-size-small-subtitle: #{$font-size-small-subtitle};
+	--font-size-normal: #{$font-size-normal};
+	--font-size-small: #{$font-size-small};
+	--primary-color: #363942;
+	--secondary-color: #b0b0b0;
+	--background-color: #ffffff;
+	--section-background-color: #fbfbff;
+	--item-color: #f8f6ff;
+	--overlay-color: rgba(0, 0, 0, 0.05);
+	--active-background-color: rgba(255, 255, 255, 0.5);
+	--primary-accent-color: #645af1;
+	--secondary-accent-color: #1155d9;
+	--danger-color: #d52349;
+	--confirm-color: rgb(14, 202, 130);
+	--global-spacing: 1.313rem;
+	--navbar-width: 7rem;
+	--navbar-height: 4.375rem;
+	--user-panel-width: 25rem;
+	--sm-container-width: 420px;
+	--scroll-bar-size: 6px;
+	--route-box-shadow: -6px 0px 10px -9px rgba(0, 0, 0, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--primary-color: #e6e6e6;
+		--secondary-color: #b0b0b0;
+		--background-color: #141414;
+		--section-background-color: #171717;
+		--item-color: #1a1a1a;
+		--overlay-color: rgba(255, 255, 255, 0.05);
+		--active-background-color: rgba(255, 255, 255, 0.01);
+		--label-background-color: #fef6d81a;
+		--route-box-shadow: -6px 0px 10px -9px rgba(255, 255, 255, 1);
+	}
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	-webkit-tap-highlight-color: transparent;
+	scrollbar-width: thin;
+	scrollbar-color: var(--overlay-color) transparent;
+}
+
+body {
+	font-family: 'Poppins', sans-serif;
+	scroll-behavior: smooth;
+	scrollbar-width: none;
+	background-color: var(--background-color);
+	overflow-x: hidden;
+
+	@include lg {
+		overflow: hidden;
+	}
+}
+
+::-webkit-scrollbar {
+	width: var(--scroll-bar-size);
+	height: var(--scroll-bar-size);
+}
+
+::-webkit-scrollbar-thumb {
+	border-radius: var(--scroll-bar-size);
+	background-color: var(--overlay-color);
+
+	&:hover {
+		background-color: #e0defe;
+	}
+}
+
+::-webkit-scrollbar-track {
+	background-color: transparent;
+}
+
+h1 {
+	font-size: var(--font-size-title);
+	color: var(--primary-color);
+	font-weight: var(--font-weight-bold);
+}
+
+h2 {
+	font-size: var(--font-size-subtitle);
+	font-weight: var(--font-weight-mid);
+	color: var(--primary-color);
+}
+
+h3 {
+	font-size: var(--font-size-small-subtitle);
+	color: var(--secondary-color);
+	font-weight: var(--font-weight-normal);
+}
+
+h4 {
+	font-size: var(--font-size-small);
+	color: var(--primary-color);
+	font-weight: var(--font-weight-normal);
+}
+
+.error-container {
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 1rem;
+}
+
+@media screen and (max-width: 400px) {
+	h1 {
+		font-size: var(--font-size-subtitle);
+	}
+
+	h2 {
+		font-size: var(--font-size-normal);
+	}
+}
+
+@media screen and (max-width: 300px) {
+	h1 {
+		font-size: var(--font-size-normal);
+	}
+
+	h2 {
+		font-size: var(--font-size-small);
+	}
+
+	h3 {
+		font-size: var(--font-size-small);
+	}
+}
+
+.customLoaderDots {
+	width: 50px;
+	height: 30px;
+	background:
+		radial-gradient(
+				circle closest-side,
+				var(--primary-accent-color) 90%,
+				#0000
+			)
+			0% 50%,
+		radial-gradient(
+				circle closest-side,
+				var(--primary-accent-color) 90%,
+				#0000
+			)
+			50% 50%,
+		radial-gradient(
+				circle closest-side,
+				var(--primary-accent-color) 90%,
+				#0000
+			)
+			100% 50%;
+	background-size: calc(100% / 3) 10px;
+	background-repeat: no-repeat;
+	animation: d3 1s infinite linear;
+}
+
+@keyframes d3 {
+	20% {
+		background-position:
+			0% 0%,
+			50% 50%,
+			100% 50%;
+	}
+	40% {
+		background-position:
+			0% 100%,
+			50% 0%,
+			100% 50%;
+	}
+	60% {
+		background-position:
+			0% 50%,
+			50% 100%,
+			100% 0%;
+	}
+	80% {
+		background-position:
+			0% 50%,
+			50% 50%,
+			100% 100%;
+	}
+}
+
+.customLoaderSpinner {
+	display: inline-block;
+	position: relative;
+	width: 50px;
+	height: 50px;
+}
+
+.customLoaderSpinner::before,
+.customLoaderSpinner::after {
+	content: '';
+	grid-area: 1/1;
+	$c: radial-gradient(farthest-side, #766df4 92%, #0000);
+	background:
+		var($c) 50% 0,
+		var($c) 50% 100%,
+		var($c) 100% 50%,
+		var($c) 0 50%;
+	background-size: 12px 12px;
+	background-repeat: no-repeat;
+	animation: s2 1s infinite;
+}
+
+.customLoaderSpinner::before {
+	margin: 4px;
+	filter: hue-rotate(45deg);
+	background-size: 8px 8px;
+	animation-timing-function: linear;
+}
+
+@keyframes s2 {
+	100% {
+		transform: rotate(0.5turn);
+	}
+}
+
+.customLoaderBox {
+	// for this you need to specify the width and height of the box and border-radius if needed
+	box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+	background: var(--background-color);
+
+	@include lg {
+		background: linear-gradient(
+				to bottom right,
+				#0000 calc(50% - 40px),
+				#766df4 50%,
+				#0000 calc(50% + 40px)
+			)
+			bottom right / calc(200% + 80px) calc(200% + 80px)
+			var(--active-background-color);
+		animation: ct8 1s infinite;
+	}
+}
+
+@keyframes ct8 {
+	100% {
+		background-position: top left;
+	}
+}
