@@ -5,6 +5,8 @@ const path = require('path');
 const { appConfig } = require('./config');
 const proxy = require('express-http-proxy');
 const cron = require('node-cron');
+const { WebSocketServer } = require('ws');
+const WebSocket = require('ws');
 
 // Initialize Express
 const app = express();
@@ -18,6 +20,29 @@ const db = new sqlite3.Database('./game.db', (err) => {
 	} else {
 		console.log('Connected to SQLite database');
 	}
+});
+
+
+// Create an HTTP server and attach the WebSocket server to it
+const server = require('http').createServer(app);
+const wss = new WebSocketServer({ server });
+
+// Function to broadcast a message to all connected clients
+const broadcast = (data) => {
+    wss.clients.forEach(client => {
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify(data));
+        }
+    });
+};
+
+// Handle WebSocket connections
+wss.on('connection', (ws) => {
+    console.log('Client connected');
+
+    ws.on('close', () => {
+        console.log('Client disconnected');
+    });
 });
 
 // Create Tables
@@ -138,6 +163,8 @@ app.post('/move', (req, res) => {
                     if (err) {
                         res.status(500).json({ error: err.message });
                     } else {
+                        // Broadcast the updated grid state to all clients
+                        broadcast({ success: true, gridState, message: 'Cell occupied!', player: gridState[gridPosition] });
                         res.json({ success: true, gridState, message: 'Cell occupied!', player: gridState[gridPosition] });
                     }
                 });
@@ -240,6 +267,6 @@ if (process.env.NODE_ENV === 'production') {
 	app.get('*', proxy(`http://localhost:${appConfig.vite_app_port || 3000}`));
 }
 
-app.listen(appConfig.server_port, () => {
+server.listen(appConfig.server_port, () => {
 	console.log(`Server running on http://localhost:${appConfig.server_port}`);
 });

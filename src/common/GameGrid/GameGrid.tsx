@@ -7,26 +7,48 @@ const GameGrid = () => {
     const [grid, setGrid] = useState<Grid>({});
     const [gridSize, setGridSize] = useState(10);
 
-    // Function to fetch game state from the server
-    const fetchGameState = async () => {
-        try {
-            const response = await axios.get('/api/game-state');
-            console.log(response.data);
-            setGridSize(response.data.gridSize);
-            setGrid(response.data.gridState);
-        } catch (error) {
-            console.error('Error fetching game state:', error);
-        }
-    };
-
     useEffect(() => {
+        // Connect to the WebSocket server
+        const socket = new WebSocket('ws://localhost:5050');
+
+        socket.onopen = () => {
+            console.log('Connected to WebSocket server');
+        };
+
+        socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.success) {
+                setGrid(data.gridState);
+                toast.success(data.message);
+            }
+        };
+
+        socket.onclose = () => {
+            console.log('Disconnected from WebSocket server');
+        };
+
+        socket.onerror = (error) => {
+            console.error('WebSocket error:', error);
+            toast.error('WebSocket error occurred.');
+        };
+
+        // Fetch initial game state
+        const fetchGameState = async () => {
+            try {
+                const response = await axios.get('/api/game-state');
+                setGridSize(response.data.gridSize);
+                setGrid(response.data.gridState);
+            } catch (error) {
+                console.error('Error fetching game state:', error);
+            }
+        };
+
         fetchGameState();
 
-        const intervalId = setInterval(() => {
-            fetchGameState();
-        }, 2500);
-
-        return () => clearInterval(intervalId);
+        // Clean up the WebSocket connection when the component unmounts
+        return () => {
+            socket.close();
+        };
     }, []);
 
     const handleCellClick = (x: number, y: number) => {
